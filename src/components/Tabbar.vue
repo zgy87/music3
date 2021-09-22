@@ -33,7 +33,7 @@ export default {
   .item{
     span{
       line-height: 84px;
-      @include font_size($font_medium)
+      @include font_size($font_medium);
       @include font_color;
     }
     &.router-link-active{

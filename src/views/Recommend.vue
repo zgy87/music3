@@ -1,12 +1,44 @@
 <template>
   <div class="recommend">
-    热门推荐
+    <Banner :banners="banners"></Banner>
+    <Personalized :personalized="personalized"></Personalized>
   </div>
 </template>
 
 <script>
+import { getBanner, getPersonalized } from '../api/index'
+import Banner from '../components/Banner'
+import Personalized from '../components/Personalized'
 export default {
-  name: 'Recommend'
+  name: 'Recommend',
+  components: {
+    // eslint-disable-next-line
+    Banner,
+    // eslint-disable-next-line
+    Personalized
+  },
+  data () {
+    return {
+      banners: [],
+      personalized: []
+    }
+  },
+  created () {
+    getBanner().then((data) => {
+      // console.log(data)
+      this.banners = data.banners
+    })
+      .catch(function (err) {
+        console.log(err)
+      })
+    getPersonalized().then((data) => {
+      // console.log(data)
+      this.personalized = data.result
+    })
+      .catch(function (err) {
+        console.log(err)
+      })
+  }
 }
 </script>
 
