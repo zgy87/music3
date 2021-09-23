@@ -1,26 +1,40 @@
 <template>
   <div class="recommend">
-    <Banner :banners="banners"></Banner>
-    <Personalized :personalized="personalized"></Personalized>
+    <ScrollView>
+      <div>
+        <Banner :banners="banners"></Banner>
+        <Personalized :personalized="personalized" :title="'推荐歌单'"></Personalized>
+        <Personalized :personalized="albums" :title="'最新专辑'"></Personalized>
+        <SongList :songs="songs"></SongList>
+      </div>
+    </ScrollView>
   </div>
 </template>
 
 <script>
-import { getBanner, getPersonalized } from '../api/index'
+import { getBanner, getPersonalized, getNewAlbum, getNewSong } from '../api/index'
 import Banner from '../components/Banner'
 import Personalized from '../components/Personalized'
+import SongList from '../components/SongList'
+import ScrollView from '../components/ScrollView'
 export default {
   name: 'Recommend',
   components: {
     // eslint-disable-next-line
     Banner,
     // eslint-disable-next-line
-    Personalized
+    Personalized,
+    // eslint-disable-next-line vue/no-unused-components
+    SongList,
+    // eslint-disable-next-line vue/no-unused-components
+    ScrollView
   },
   data () {
     return {
       banners: [],
-      personalized: []
+      personalized: [],
+      albums: [],
+      songs: []
     }
   },
   created () {
@@ -38,10 +52,32 @@ export default {
       .catch(function (err) {
         console.log(err)
       })
+    getNewAlbum().then((data) => {
+      // console.log(data.albums.splice(0, 6))
+      // this.personalized = data.result
+      this.albums = data.albums.splice(0, 6)
+    })
+      .catch(function (err) {
+        console.log(err)
+      })
+    getNewSong().then((data) => {
+      // console.log(data)
+      this.songs = data.result
+      // this.albums = data.albums.splice(0, 6)
+    })
+      .catch(function (err) {
+        console.log(err)
+      })
   }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.recommend{
+  position: fixed;
+  top: 184px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 </style>
