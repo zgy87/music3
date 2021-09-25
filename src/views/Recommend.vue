@@ -1,13 +1,18 @@
 <template>
   <div class="recommend">
-    <ScrollView>
-      <div>
-        <Banner :banners="banners"></Banner>
-        <Personalized :personalized="personalized" :title="'推荐歌单'"></Personalized>
-        <Personalized :personalized="albums" :title="'最新专辑'"></Personalized>
-        <SongList :songs="songs"></SongList>
-      </div>
-    </ScrollView>
+    <div class="recommend-warpper">
+      <ScrollView>
+        <div>
+          <Banner :banners="banners"></Banner>
+          <Personalized :personalized="personalized" :title="'推荐歌单'" @select="fatherSelectItem" :type="'personalized'"></Personalized>
+          <Personalized :personalized="albums" :title="'最新专辑'" @select="fatherSelectItem" :type="'albums'"></Personalized>
+          <SongList :songs="songs"></SongList>
+        </div>
+      </ScrollView>
+    </div>
+    <transition>
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -17,6 +22,7 @@ import Banner from '../components/Banner'
 import Personalized from '../components/Personalized'
 import SongList from '../components/SongList'
 import ScrollView from '../components/ScrollView'
+// import router from '@vue/cli-plugin-router'
 export default {
   name: 'Recommend',
   components: {
@@ -28,6 +34,17 @@ export default {
     SongList,
     // eslint-disable-next-line vue/no-unused-components
     ScrollView
+  },
+  methods: {
+    fatherSelectItem (id, type) {
+      // console.log(type)
+      this.$router.push({
+        path: `recommend/detail/${id}/${type}`
+      })
+      // router.push({
+      //   path: `recommend/detail/${id}/${type}`
+      // })
+    }
   },
   data () {
     return {
@@ -79,5 +96,30 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
+  //overflow: hidden;
+  .recommend-warpper{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+.v-enter{
+  transform: translateX(100%);
+}
+.v-enter-to{
+  transform: translateX(0%);
+}
+.v-enter-active{
+  transition: all 1s;
+}
+.v-leave{
+  transform: translateX(0%);
+}
+.v-leave-to{
+  transform: translateX(100%);
+}
+.v-leave-active{
+  transition: all 1s;
 }
 </style>

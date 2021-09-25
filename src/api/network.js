@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // 全局配置
-axios.defaults.baseURL = 'http://127.0.0.1:3000'
+axios.defaults.baseURL = 'http://10.10.1.186:3000'
 axios.defaults.timeout = 3000
 
 // 封装get post 方法

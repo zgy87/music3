@@ -14,6 +14,9 @@ export default {
       mouseWheel: true,
       // 禁用滚动条
       scrollbars: false,
+      probeType: 3,
+      click: true,
+      tap: true,
       // 解决拖拽卡顿问题
       scrollX: false,
       scrollY: true,
@@ -41,6 +44,14 @@ export default {
     }
     // 2.告诉观察者对象需要观察谁 观察什么内容
     observer.observe(this.$refs.wrapper, config)
+  },
+  methods: {
+    // 提供监听滚动距离方法给外界使用
+    scrolling (fn) {
+      this.iscroll.on('scroll', function () {
+        fn(this.y)
+      })
+    }
   }
 }
 </script>
