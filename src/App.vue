@@ -3,18 +3,22 @@
     <Header></Header>
     <Tabbar></Tabbar>
     <router-view></router-view>
+    <Player></Player>
   </div>
 </template>
 <script>
 import Header from './components/Header'
 import Tabbar from './components/Tabbar'
+import Player from './views/Player'
 export default {
   name: 'App',
   components: {
     // eslint-disable-next-line vue/no-unused-components
     Header,
     // eslint-disable-next-line vue/no-unused-components
-    Tabbar
+    Tabbar,
+    // eslint-disable-next-line vue/no-unused-components
+    Player
   }
 }
 </script>

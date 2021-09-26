@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import SubHeader from '../components/SubHeader'
-import DetailTop from '../components/DetailTop'
-import DetailBottom from '../components/DetailBottom'
+import SubHeader from '../components/Detail/DetailHeader'
+import DetailTop from '../components/Detail/DetailTop'
+import DetailBottom from '../components/Detail/DetailBottom'
 import ScrollView from '../components/ScrollView'
 
 import { getPlayList, getAlbum } from '../api/index'
@@ -48,7 +48,7 @@ export default {
     } else if (this.$route.params.type === 'albums') {
       getAlbum({ id: this.$route.params.id })
         .then((data) => {
-          console.log(data)
+          // console.log(data)
           this.playlist = {
             name: data.album.name,
             coverImgUrl: data.album.picUrl,
