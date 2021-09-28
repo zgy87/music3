@@ -4,7 +4,7 @@
       <div class="bottom-icon"></div>
       <div class="bottom-title">播放全部</div>
     </li>
-    <li v-for="value in playlist" :key="value.id" class="item">
+    <li v-for="value in playlist" :key="value.id" class="item" @click="selectMusic">
       <h3>{{value.name}}</h3>
       <p>{{value.ar[0].name}} - {{value.al.name}}</p>
     </li>
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'DetailBottom',
   props: {
@@ -20,6 +21,15 @@ export default {
       default: () => [],
       // eslint-disable-next-line
       required: true
+    }
+  },
+  methods: {
+    ...mapActions([
+      'setFullScreen'// 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+    ]),
+    selectMusic () {
+    // this.$store.dispatch('setFullScreen', true)
+      this.setFullScreen(true)
     }
   }
 }

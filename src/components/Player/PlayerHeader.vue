@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="header-left"></div>
+    <div class="header-left" @click="hiddenNormalPlayer"></div>
     <div class="header-title">
       <h3>晴天</h3>
       <p>周杰伦</p>
@@ -10,8 +10,17 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
-  name: 'PlayerHeader'
+  name: 'PlayerHeader',
+  methods: {
+    ...mapActions([
+      'setFullScreen'// 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+    ]),
+    hiddenNormalPlayer () {
+      this.setFullScreen(false)
+    }
+  }
 }
 </script>
 
@@ -22,7 +31,7 @@ export default {
   width: 100%;
   height: 100px;
   //background: #f01;
-  @include bg_color();
+  //@include bg_color();
   display: flex;
   justify-content: space-between;
   position: relative;

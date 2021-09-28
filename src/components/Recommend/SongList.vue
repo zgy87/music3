@@ -4,7 +4,7 @@
       <h3>最新音乐</h3>
     </div>
     <ul class="song-list">
-      <li v-for="value in songs" :key="value.id" class="item">
+      <li v-for="value in songs" :key="value.id" class="item" @click="selectMusic">
 <!--        <img :src="value.song.album.picUrl" alt="">-->
         <img v-lazy="value.song.album.picUrl" alt="">
         <div>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'SongList',
   props: {
@@ -25,6 +26,14 @@ export default {
       default: () => [],
       // eslint-disable-next-line
       required: true
+    }
+  },
+  methods: {
+    ...mapActions([
+      'setFullScreen'// 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+    ]),
+    selectMusic () {
+      this.setFullScreen(true)
     }
   }
 }
