@@ -1,3 +1,5 @@
 export default {
-  isFullScreen: false
+  isFullScreen: false,
+  isShowMiniPlayer: false,
+  isPlaying: false
 }

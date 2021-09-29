@@ -15,10 +15,12 @@ export default {
   name: 'PlayerHeader',
   methods: {
     ...mapActions([
-      'setFullScreen'// 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+      'setFullScreen', // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+      'setMiniPlayer'
     ]),
     hiddenNormalPlayer () {
       this.setFullScreen(false)
+      this.setMiniPlayer(true)
     }
   }
 }

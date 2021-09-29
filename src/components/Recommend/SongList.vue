@@ -30,10 +30,12 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setFullScreen'// 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+      'setFullScreen', // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
+      'setMiniPlayer'
     ]),
     selectMusic () {
       this.setFullScreen(true)
+      this.setMiniPlayer(false)
     }
   }
 }
