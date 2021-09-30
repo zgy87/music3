@@ -6,7 +6,7 @@
   <div class="mini-player" v-show="this.isShowMiniPlayer">
     <div class="player-warpper">
       <div class="play-left" @click="showNormalPlayer">
-        <img src="https://gss0.baidu.com/70cFfyinKgQFm2e88IuM_a/baike/pic/item/8d5494eef01f3a2997b12e219725bc315d607ce0.jpg" alt="">
+        <img src="https://gss0.baidu.com/70cFfyinKgQFm2e88IuM_a/baike/pic/item/8d5494eef01f3a2997b12e219725bc315d607ce0.jpg" ref="cd">
         <div class="player-title">
           <h3>晴天</h3>
           <p>周杰伦</p>
@@ -31,10 +31,11 @@ export default {
     ...mapActions([
       'setFullScreen', // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
       'setMiniPlayer',
+      'setListPlayer',
       'setIsPlaying'
     ]),
     showList () {
-      this.$emit('showList')
+      this.setListPlayer(true)
     },
     showNormalPlayer () {
       this.setFullScreen(true)
@@ -64,8 +65,10 @@ export default {
     isPlaying (newValue, oldValue) {
       if (newValue) {
         this.$refs.play.classList.add('active')
+        this.$refs.cd.classList.add('active')
       } else {
         this.$refs.play.classList.remove('active')
+        this.$refs.cd.classList.remove('active')
       }
     }
   }
@@ -96,6 +99,11 @@ export default {
         height: 100px;
         border-radius: 50%;
         margin-right: 20px;
+        animation: sport 20s linear infinite;
+        animation-play-state: paused;
+        &.active{
+          animation-play-state: running;
+        }
       }
       .player-title{
         display: flex;
@@ -118,9 +126,9 @@ export default {
       .play{
         width: 84px;
         height: 84px;
-        @include bg_img('../../assets/images/pause');
+        @include bg_img('../../assets/images/play');
         &.active{
-          @include bg_img('../../assets/images/play')
+          @include bg_img('../../assets/images/pause')
         }
       }
       .list{
@@ -129,6 +137,14 @@ export default {
         @include bg_img('../../assets/images/list');
       }
     }
+  }
+}
+@keyframes sport {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
   }
 }
 </style>

@@ -2,7 +2,7 @@
   <swiper :options="swiperOption" class="banner">
     <!-- slides -->
     <swiper-slide class="cd">
-      <div class="cd-warpper">
+      <div class="cd-warpper" ref="cdWarpper">
         <img src="https://gss0.baidu.com/70cFfyinKgQFm2e88IuM_a/baike/pic/item/8d5494eef01f3a2997b12e219725bc315d607ce0.jpg" alt="">
       </div>
       <p>故事的小黄花</p>
@@ -73,6 +73,8 @@
 import 'swiper/dist/css/swiper.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import ScrollView from '@/components/ScrollView'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'PlayerMiddle',
   components: {
@@ -98,6 +100,20 @@ export default {
         observeSlideChildren: true
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isPlaying'
+    ])
+  },
+  watch: {
+    isPlaying (newValue, oldValue) {
+      if (newValue) {
+        this.$refs.cdWarpper.classList.add('active')
+      } else {
+        this.$refs.cdWarpper.classList.remove('active')
+      }
+    }
   }
 }
 </script>
@@ -119,6 +135,11 @@ export default {
       border-radius: 50%;
       border: 30px solid #fff;
       overflow: hidden;
+      animation: sport 20s linear infinite;
+      animation-play-state: paused;
+      &.active{
+        animation-play-state: running;
+      }
       img{
         width: 100%;
         height: 100%;
@@ -140,6 +161,14 @@ export default {
       &:last-of-type{
         padding-bottom: 100px;
       }
+    }
+  }
+  @keyframes sport {
+    from{
+      transform: rotate(0deg);
+    }
+    to{
+      transform: rotate(360deg);
     }
   }
 }

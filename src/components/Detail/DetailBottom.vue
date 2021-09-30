@@ -4,7 +4,7 @@
       <div class="bottom-icon"></div>
       <div class="bottom-title">播放全部</div>
     </li>
-    <li v-for="value in playlist" :key="value.id" class="item" @click="selectMusic">
+    <li v-for="value in playlist" :key="value.id" class="item" @click="selectMusic(value.id)">
       <h3>{{value.name}}</h3>
       <p>{{value.ar[0].name}} - {{value.al.name}}</p>
     </li>
@@ -26,12 +26,14 @@ export default {
   methods: {
     ...mapActions([
       'setFullScreen', // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
-      'setMiniPlayer'
+      'setMiniPlayer',
+      'setSongDetail'
     ]),
-    selectMusic () {
+    selectMusic (id) {
     // this.$store.dispatch('setFullScreen', true)
       this.setFullScreen(true)
       this.setMiniPlayer(false)
+      this.setSongDetail([id])
     }
   }
 }
