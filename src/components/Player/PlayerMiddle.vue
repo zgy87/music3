@@ -3,64 +3,14 @@
     <!-- slides -->
     <swiper-slide class="cd">
       <div class="cd-warpper" ref="cdWarpper">
-        <img src="https://gss0.baidu.com/70cFfyinKgQFm2e88IuM_a/baike/pic/item/8d5494eef01f3a2997b12e219725bc315d607ce0.jpg" alt="">
+        <img :src="currentSong.picUrl" alt="">
       </div>
-      <p>故事的小黄花</p>
+      <p>{{ getFirstLyric() }}</p>
     </swiper-slide>
-    <swiper-slide class="lyric">
-      <ScrollView>
+    <swiper-slide class="lyric" ref="lyric">
+      <ScrollView ref="scrollView">
         <ul>
-          <li>第1个li</li>
-          <li>第2个li</li>
-          <li>第3个li</li>
-          <li>第4个li</li>
-          <li>第5个li</li>
-          <li>第6个li</li>
-          <li>第7个li</li>
-          <li>第8个li</li>
-          <li>第9个li</li>
-          <li>第10个li</li>
-          <li>第11个li</li>
-          <li>第12个li</li>
-          <li>第13个li</li>
-          <li>第14个li</li>
-          <li>第15个li</li>
-          <li>第16个li</li>
-          <li>第17个li</li>
-          <li>第18个li</li>
-          <li>第19个li</li>
-          <li>第20个li</li>
-          <li>第21个li</li>
-          <li>第22个li</li>
-          <li>第23个li</li>
-          <li>第24个li</li>
-          <li>第25个li</li>
-          <li>第26个li</li>
-          <li>第27个li</li>
-          <li>第28个li</li>
-          <li>第29个li</li>
-          <li>第30个li</li>
-          <li>第31个li</li>
-          <li>第32个li</li>
-          <li>第33个li</li>
-          <li>第34个li</li>
-          <li>第35个li</li>
-          <li>第36个li</li>
-          <li>第37个li</li>
-          <li>第38个li</li>
-          <li>第39个li</li>
-          <li>第40个li</li>
-          <li>第41个li</li>
-          <li>第42个li</li>
-          <li>第43个li</li>
-          <li>第44个li</li>
-          <li>第45个li</li>
-          <li>第46个li</li>
-          <li>第47个li</li>
-          <li>第48个li</li>
-          <li>第49个li</li>
-          <li>第50个li</li>
-          <li>第51个li</li>
+          <li v-for="(value, key) in currentLyric" :key="key" :class="{'active' : currentLineNum === key}">{{ value }}</li>
         </ul>
       </ScrollView>
     </swiper-slide>
@@ -98,12 +48,15 @@ export default {
         observer: true,
         observeParents: true,
         observeSlideChildren: true
-      }
+      },
+      currentLineNum: '0'
     }
   },
   computed: {
     ...mapGetters([
-      'isPlaying'
+      'isPlaying',
+      'currentSong',
+      'currentLyric'
     ])
   },
   watch: {
@@ -113,6 +66,68 @@ export default {
       } else {
         this.$refs.cdWarpper.classList.remove('active')
       }
+    },
+    currentTime (newValue, oldValue) {
+      /* // 0.歌词同步高亮
+      const lineNum = Math.floor(newValue) + ''
+      const result = this.currentLyric[lineNum]
+      if (result !== undefined) {
+        this.currentLineNum = lineNum
+        // 1.滚动的歌词同步
+        const currentLyricTop = document.querySelector('li.active').offsetTop
+        const lyricHeight = this.$refs.lyric.$el.offsetHeight
+        // console.log(lyricHeight)
+        if (currentLyricTop > lyricHeight / 2) {
+          console.log('要开始滚动')
+          this.$refs.scrollView.scrollTo(0, lyricHeight / 2 - currentLyricTop, 100)
+        }
+      } */
+      // 0.歌词同步高亮
+      // this.currentLineNum = Math.floor(newValue) + ''
+      const lineNum = Math.floor(newValue)
+      this.currentLineNum = this.getActiveLineNum(lineNum)
+      // 1.滚动的歌词同步
+      const currentLyricTop = document.querySelector('li.active').offsetTop
+      const lyricHeight = this.$refs.lyric.$el.offsetHeight
+      // console.log(lyricHeight)
+      if (currentLyricTop > lyricHeight / 2) {
+        console.log('要开始滚动')
+        this.$refs.scrollView.scrollTo(0, lyricHeight / 2 - currentLyricTop, 100)
+      } else {
+        this.$refs.scrollView.scrollTo(0, 0, 100)
+      }
+    },
+    currentLyric (newValue, oldValue) {
+      for (const key in newValue) {
+        this.currentLineNum = key
+        return
+      }
+    }
+  },
+  methods: {
+    getFirstLyric () {
+      for (const key in this.currentLyric) {
+        return this.currentLyric[key]
+      }
+    },
+    getActiveLineNum (lineNum) {
+      if (lineNum < 0) {
+        return this.currentLineNum
+      }
+      const result = this.currentLyric[lineNum + '']
+      if (result === undefined) {
+        lineNum--
+        return this.getActiveLineNum(lineNum)
+      } else {
+        return lineNum + ''
+      }
+    }
+  },
+  props: {
+    currentTime: {
+      type: Number,
+      default: 0,
+      required: true
     }
   }
 }
@@ -159,7 +174,10 @@ export default {
       @include font_color;
       margin: 10px 0;
       &:last-of-type{
-        padding-bottom: 100px;
+        padding-bottom: 40%;
+      }
+      &.active{
+        color: #fff;
       }
     }
   }

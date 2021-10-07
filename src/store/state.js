@@ -5,5 +5,10 @@ export default {
   isShowListPlayer: false,
   isPlaying: false,
   modeType: mode.loop,
-  songs: []
+  songs: [],
+  currentSong: {},
+  currentIndex: 0,
+  currentLyric: {},
+  curTime: 0,
+  favoriteList: []
 }

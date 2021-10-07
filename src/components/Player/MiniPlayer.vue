@@ -6,10 +6,10 @@
   <div class="mini-player" v-show="this.isShowMiniPlayer">
     <div class="player-warpper">
       <div class="play-left" @click="showNormalPlayer">
-        <img src="https://gss0.baidu.com/70cFfyinKgQFm2e88IuM_a/baike/pic/item/8d5494eef01f3a2997b12e219725bc315d607ce0.jpg" ref="cd">
+        <img :src="currentSong.picUrl" ref="cd">
         <div class="player-title">
-          <h3>晴天</h3>
-          <p>周杰伦</p>
+          <h3>{{ currentSong.name }}</h3>
+          <p>{{ currentSong.singer }}</p>
         </div>
       </div>
       <div class="play-right">
@@ -58,7 +58,8 @@ export default {
   computed: {
     ...mapGetters([
       'isShowMiniPlayer',
-      'isPlaying'
+      'isPlaying',
+      'currentSong'
     ])
   },
   watch: {
@@ -74,7 +75,6 @@ export default {
   }
 }
 </script>
-
 <style scoped lang="scss">
 @import "../../assets/css/variable";
 @import "../../assets/css/mixin";
@@ -108,7 +108,7 @@ export default {
       .player-title{
         display: flex;
         flex-direction: column;
-        align-items: center;
+        //align-items: center;
         justify-content: center;
         h3{
           @include font_size($font_medium);

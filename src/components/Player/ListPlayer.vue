@@ -13,40 +13,20 @@
           <p v-else>随机播放</p>
         </div>
         <div class="top-right">
-          <div class="del"></div>
+          <div class="del" @click="delAll"></div>
         </div>
       </div>
       <div class="player-middle">
-        <ScrollView>
-          <ul>
-            <li class="item">
+        <ScrollView ref="scrollView">
+          <ul ref="play">
+            <li class="item" v-for="(value, index) in songs" :key="value.id" @click="selectMusic(index)">
               <div class="item-left">
-                <div class="item-play"></div>
-                <p>晴天</p>
+                <div class="item-play" @click.stop="play" v-show="currentIndex === index"></div>
+                <p>{{ value.name }}</p>
               </div>
               <div class="item-right">
-                <div class="item-favorite"></div>
-                <div class="item-del"></div>
-              </div>
-            </li>
-            <li class="item">
-              <div class="item-left">
-                <div class="item-play"></div>
-                <p>晴天</p>
-              </div>
-              <div class="item-right">
-                <div class="item-favorite"></div>
-                <div class="item-del"></div>
-              </div>
-            </li>
-            <li class="item">
-              <div class="item-left">
-                <div class="item-play" @click="play" ref="play"></div>
-                <p>晴天</p>
-              </div>
-              <div class="item-right">
-                <div class="item-favorite"></div>
-                <div class="item-del"></div>
+                <div class="item-favorite" @click.stop="favorite(value)" :class="{'active': isFavorite(value)}"></div>
+                <div class="item-del" @click.stop="del(index)"></div>
               </div>
             </li>
           </ul>
@@ -76,7 +56,10 @@ export default {
     ...mapActions([
       'setIsPlaying',
       'setModeType',
-      'setListPlayer'
+      'setListPlayer',
+      'setDelSong',
+      'setCurrentIndex',
+      'setFavoriteSong'
     ]),
     hidden () {
       this.setListPlayer(false)
@@ -102,18 +85,40 @@ export default {
       } else if (this.modeType === modeType.random) {
         this.setModeType(modeType.loop)
       }
+    },
+    del (index) {
+      this.setDelSong(index)
+    },
+    delAll () {
+      this.setDelSong()
+    },
+    selectMusic (index) {
+      this.setCurrentIndex(index)
+    },
+    favorite (value) {
+      this.setFavoriteSong(value)
+    },
+    isFavorite (song) {
+      const result = this.favoriteList.find(function (currentValue) {
+        return currentValue.id === song.id
+      })
+      return result !== undefined
     }
   },
   computed: {
     ...mapGetters([
       'isPlaying',
       'modeType',
-      'isShowListPlayer'
+      'isShowListPlayer',
+      'songs',
+      'currentIndex',
+      'favoriteList'
     ])
   },
   watch: {
-    isPlaying (newValue, oldValue) {
+    isPlaying  (newValue, oldValue) {
       if (newValue) {
+        // console.log(newValue)
         this.$refs.play.classList.add('active')
       } else {
         this.$refs.play.classList.remove('active')
@@ -129,6 +134,11 @@ export default {
       } else if (newValue === modeType.random) {
         this.$refs.mode.classList.remove('one')
         this.$refs.mode.classList.add('random')
+      }
+    },
+    isShowListPlayer (newValue, oldValue) {
+      if (newValue) {
+        this.$refs.scrollView.refresh()
       }
     }
   }
@@ -183,6 +193,17 @@ export default {
       }
     }
     .player-middle{
+      height: 700px;
+      overflow: hidden;
+      ul{
+        &.active{
+          .item{
+            .item-play{
+              @include bg_img('../../assets/images/small_pause')
+            }
+          }
+        }
+      }
       .item{
         border-top: 1px solid #ccc;
         height: 100px;
@@ -199,9 +220,6 @@ export default {
             height: 56px;
             margin-right: 20px;
             @include bg_img('../../assets/images/small_play');
-            &.active{
-              @include bg_img('../../assets/images/small_pause')
-            }
           }
           p{
             @include font_size($font_medium_s);
@@ -216,7 +234,10 @@ export default {
             height: 56px;
             position: relative;
             top: 4px;
-            @include bg_img('../../assets/images/small_favorite');
+            @include bg_img('../../assets/images/small_un_favorite');
+            &.active{
+              @include bg_img('../../assets/images/small_favorite');
+            }
           }
           .item-del{
             width: 52px;

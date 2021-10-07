@@ -1,6 +1,6 @@
 <template>
   <ul class="detail-bottom">
-    <li class="bottom-top">
+    <li class="bottom-top" @click="selectAllMusic">
       <div class="bottom-icon"></div>
       <div class="bottom-title">播放全部</div>
     </li>
@@ -26,14 +26,23 @@ export default {
   methods: {
     ...mapActions([
       'setFullScreen', // 将 `this.increment()` 映射为 `this.$store.dispatch('increment')`
-      'setMiniPlayer',
+      // 'setMiniPlayer',
       'setSongDetail'
     ]),
     selectMusic (id) {
     // this.$store.dispatch('setFullScreen', true)
       this.setFullScreen(true)
-      this.setMiniPlayer(false)
+      // this.setMiniPlayer(false)
       this.setSongDetail([id])
+    },
+    selectAllMusic () {
+      this.setFullScreen(true)
+      // console.log(this.playlist)
+      const ids = this.playlist.map(function (item) {
+        return item.id
+      })
+      // console.log(ids)
+      this.setSongDetail(ids)
     }
   }
 }

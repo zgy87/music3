@@ -1,20 +1,20 @@
 <template>
   <div class="player-bottom">
     <div class="bottom-progress">
-      <span>00:00</span>
-      <div class="progress-bar">
-        <div class="progress-line">
+      <span ref="eleCurrentTime">00:00</span>
+      <div class="progress-bar" @click="processClick" ref="progressBar">
+        <div class="progress-line" ref="progressLine">
           <div class="progress-dot"></div>
         </div>
       </div>
-      <span>00:00</span>
+      <span ref="eleTotalTime">00:00</span>
     </div>
     <div class="bottom-controll">
       <div class="mode loop" @click="mode" ref="mode"></div>
-      <div class="prev"></div>
+      <div class="prev" @click="prev"></div>
       <div class="play" @click="play" ref="play"></div>
-      <div class="next"></div>
-      <div class="favorite"></div>
+      <div class="next" @click="next"></div>
+      <div class="favorite" @click="favorite" :class="{'active': isFavorite(currentSong)}"></div>
     </div>
   </div>
 </template>
@@ -28,7 +28,10 @@ export default {
   methods: {
     ...mapActions([
       'setIsPlaying',
-      'setModeType'
+      'setModeType',
+      'setCurrentIndex',
+      'setCurrentTime',
+      'setFavoriteSong'
     ]),
     play () {
       this.setIsPlaying(!this.isPlaying)
@@ -41,12 +44,72 @@ export default {
       } else if (this.modeType === modeType.random) {
         this.setModeType(modeType.loop)
       }
+    },
+    prev () {
+      this.setCurrentIndex(this.currentIndex - 1)
+    },
+    next () {
+      this.setCurrentIndex(this.currentIndex + 1)
+    },
+    favorite () {
+      this.setFavoriteSong(this.currentSong)
+    },
+    isFavorite (song) {
+      const result = this.favoriteList.find(function (currentValue) {
+        return currentValue.id === song.id
+      })
+      return result !== undefined
+    },
+    formartTime (time) {
+      // 2.得到两个时间之间的差值(秒)
+      const differSecond = time
+      // 3.利用相差的总秒数 / 每一天的秒数 = 相差的天数
+      let day = Math.floor(differSecond / (60 * 60 * 24))
+      day = day >= 10 ? day : '0' + day
+      // 4.利用相差的总秒数 / 小时 % 24;
+      let hour = Math.floor(differSecond / (60 * 60) % 24)
+      hour = hour >= 10 ? hour : '0' + hour
+      // 5.利用相差的总秒数 / 分钟 % 60;
+      let minute = Math.floor(differSecond / 60 % 60)
+      minute = minute >= 10 ? minute : '0' + minute
+      // 6.利用相差的总秒数 % 秒数
+      let second = Math.floor(differSecond % 60)
+      second = second >= 10 ? second : '0' + second
+      return {
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second
+      }
+    },
+    processClick (e) {
+      // 0.计算并且设置进度条的位置
+      // const normalLeft = e.target.offsetLeft
+      const normalLeft = this.$refs.progressBar.offsetLeft
+      const eventLeft = e.pageX
+      const clickLeft = eventLeft - normalLeft
+      // console.log(clickLeft, 'clickLeft')
+      // const progressWidth = e.currentTarget.offsetWidth
+      const progressWidth = this.$refs.progressBar.offsetWidth
+      console.log(progressWidth, 'progressWidth')
+      // console.log(progressWidth, 'progressWidth')
+      const value = clickLeft / progressWidth
+      // console.log(value, 'value')
+      this.$refs.progressLine.style.width = value * 100 + '%'
+
+      // 1.计算点击后播放的时间
+      const currentTime = this.totalTime * value
+      // console.log(currentTime)
+      this.setCurrentTime(currentTime)
     }
   },
   computed: {
     ...mapGetters([
       'isPlaying',
-      'modeType'
+      'modeType',
+      'currentIndex',
+      'currentSong',
+      'favoriteList'
     ])
   },
   watch: {
@@ -68,6 +131,30 @@ export default {
         this.$refs.mode.classList.remove('one')
         this.$refs.mode.classList.add('random')
       }
+    },
+    totalTime (newValue, oldValue) {
+      const time = this.formartTime(newValue)
+      this.$refs.eleTotalTime.innerHTML = time.minute + ':' + time.second
+    },
+    currentTime (newValue, oldValue) {
+      // 0.格式化当前播放时间值
+      const time = this.formartTime(newValue)
+      this.$refs.eleCurrentTime.innerHTML = time.minute + ':' + time.second
+      // 1.根据当前播放的时间计算小圆点比例
+      const value = newValue / this.totalTime * 100
+      this.$refs.progressLine.style.width = value + '%'
+    }
+  },
+  props: {
+    totalTime: {
+      type: Number,
+      default: 0,
+      required: true
+    },
+    currentTime: {
+      type: Number,
+      default: 0,
+      required: true
     }
   }
 }
@@ -96,19 +183,19 @@ export default {
       margin: 0 10px;
       height: 10px;
       background: #fff;
-      position: relative;
       bottom: 5px;
       .progress-line{
-        width: 50%;
+        width: 0%;
         height: 100%;
         background: #ccc;
+        position: relative;
         .progress-dot{
           width: 20px;
           height: 20px;
           border-radius: 50%;
           background: #fff;
           position: absolute;
-          left: 50%;
+          left: 100%;
           top: 50%;
           transform: translateY(-50%);
         }
@@ -128,29 +215,32 @@ export default {
     }
     .mode{
       &.loop{
-        @include bg_img('../../assets/images/loop')
+        @include bg_img('../../assets/images/loop');
       }
       &.one{
-        @include bg_img('../../assets/images/one')
+        @include bg_img('../../assets/images/one');
       }
       &.random{
-        @include bg_img('../../assets/images/shuffle')
+        @include bg_img('../../assets/images/shuffle');
       }
     }
     .prev{
-      @include bg_img('../../assets/images/prev')
+      @include bg_img('../../assets/images/prev');
     }
     .play{
-      @include bg_img('../../assets/images/play')
+      @include bg_img('../../assets/images/play');
       &.active{
-        @include bg_img('../../assets/images/pause')
+        @include bg_img('../../assets/images/pause');
       }
     }
     .next{
-      @include bg_img('../../assets/images/next')
+      @include bg_img('../../assets/images/next');
     }
     .favorite{
-      @include bg_img('../../assets/images/un_favorite')
+      @include bg_img('../../assets/images/un_favorite');
+      &.active{
+        @include bg_img('../../assets/images/favorite');
+      }
     }
   }
 }

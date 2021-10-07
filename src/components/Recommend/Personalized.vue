@@ -73,16 +73,19 @@ export default {
       width: 200px;
       padding-bottom: 20px;
       margin-left: 20px;
+      //padding: 20px 0;
       img{
         width: 200px;
         height: 200px;
         border-radius: 20px;
       }
       p{
+        width: 100%;
         @include clamp(2);
         @include font_color;
         @include font_size($font_medium_s);
         text-align: center;
+        margin-top: 10px;
       }
     }
   }
