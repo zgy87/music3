@@ -13,6 +13,7 @@ import MiniPlayer from '@/components/Player/MiniPlayer'
 import ListPlayer from '@/components/Player/ListPlayer'
 import { mapGetters, mapActions } from 'vuex'
 import mode from '../store/modeType'
+import { getRandomIntInclusive, setLocalStorage, getLocalStorage } from '../tools/tools'
 export default {
   name: 'Player',
   components: {
@@ -31,13 +32,16 @@ export default {
       'curTime',
       'modeType',
       'songs',
-      'favoriteList'
+      'favoriteList',
+      'historyList'
     ])
   },
   methods: {
     ...mapActions([
       'setCurrentIndex',
-      'setFavoriteList'
+      'setFavoriteList',
+      'setHistorySong',
+      'setHistoryList'
     ]),
     timeupdate (e) {
       // console.log(e.target.currentTime)
@@ -50,19 +54,16 @@ export default {
       } else if (this.modeType === mode.one) {
         this.$refs.audio.play()
       } else if (this.modeType === mode.random) {
-        const index = this.getRandomIntInclusive(0, this.songs.length - 1)
+        const index = getRandomIntInclusive(0, this.songs.length - 1)
         this.setCurrentIndex(index)
       }
-    },
-    getRandomIntInclusive  (min, max) {
-      min = Math.ceil(min)
-      max = Math.floor(max)
-      return Math.floor(Math.random() * (max - min + 1)) + min // 含最大值，含最小值
     }
   },
   watch: {
     isPlaying (newValue, oldValue) {
       if (newValue) {
+        // console.log('播放')
+        this.setHistorySong(this.currentSong)
         this.$refs.audio.play()
       } else {
         this.$refs.audio.pause()
@@ -72,6 +73,8 @@ export default {
       this.$refs.audio.oncanplay = () => {
         this.totalTime = this.$refs.audio.duration
         if (this.isPlaying) {
+          // console.log('播放1')
+          this.setHistorySong(this.currentSong)
           this.$refs.audio.play()
         } else {
           this.$refs.audio.pause()
@@ -82,13 +85,24 @@ export default {
       this.$refs.audio.currentTime = newValue
     },
     favoriteList (newValue, oldValue) {
-      localStorage.setItem('favoriteList', JSON.stringify(newValue))
+      // localStorage.setItem('favoriteList', JSON.stringify(newValue))
+      setLocalStorage('favoriteList', newValue)
+    },
+    historyList (newValue, oldValue) {
+      // localStorage.setItem('historyList', JSON.stringify(newValue))
+      setLocalStorage('historyList', newValue)
     }
   },
   created () {
-    const list = JSON.parse(localStorage.getItem('favoriteList'))
-    if (list === null) return
-    this.setFavoriteList(list)
+    // const favoriteList = JSON.parse(localStorage.getItem('favoriteList')
+    const favoriteList = getLocalStorage('favoriteList')
+    if (favoriteList === null) return
+    this.setFavoriteList(favoriteList)
+
+    // const historyList = JSON.parse(localStorage.getItem('historyList'))
+    const historyList = getLocalStorage('historyList')
+    if (historyList === null) return
+    this.setHistoryList(historyList)
   },
   mounted () {
     this.$refs.audio.oncanplay = () => {
