@@ -1,12 +1,19 @@
 <template>
   <transition appear>
-    <div class="account"></div>
+    <div class="account">
+      <AccountHeader></AccountHeader>
+    </div>
   </transition>
 </template>
 
 <script>
+import AccountHeader from '../components/Account/AccountHeader'
 export default {
-  name: 'Account'
+  name: 'Account',
+  components: {
+    // eslint-disable-next-line vue/no-unused-components
+    AccountHeader
+  }
 }
 </script>
 

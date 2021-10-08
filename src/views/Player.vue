@@ -62,7 +62,7 @@ export default {
   watch: {
     isPlaying (newValue, oldValue) {
       if (newValue) {
-        // console.log('播放')
+        // console.log('播放了')
         this.setHistorySong(this.currentSong)
         this.$refs.audio.play()
       } else {
@@ -73,7 +73,6 @@ export default {
       this.$refs.audio.oncanplay = () => {
         this.totalTime = this.$refs.audio.duration
         if (this.isPlaying) {
-          // console.log('播放1')
           this.setHistorySong(this.currentSong)
           this.$refs.audio.play()
         } else {
@@ -94,7 +93,7 @@ export default {
     }
   },
   created () {
-    // const favoriteList = JSON.parse(localStorage.getItem('favoriteList')
+    // const favoriteList = JSON.parse(localStorage.getItem('favoriteList'))
     const favoriteList = getLocalStorage('favoriteList')
     if (favoriteList === null) return
     this.setFavoriteList(favoriteList)

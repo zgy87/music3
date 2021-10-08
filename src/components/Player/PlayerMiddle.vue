@@ -88,6 +88,7 @@ export default {
       this.currentLineNum = this.getActiveLineNum(lineNum)
       // 1.滚动的歌词同步
       const currentLyricTop = document.querySelector('li.active').offsetTop
+      // if (currentLyricTop === null) return
       const lyricHeight = this.$refs.lyric.$el.offsetHeight
       // console.log(lyricHeight)
       if (currentLyricTop > lyricHeight / 2) {
