@@ -5,6 +5,9 @@ import store from './store'
 import fastclick from 'fastclick'
 import './assets/css/base.scss'
 import VueLazyload from 'vue-lazyload'
+import VConsole from 'vconsole'
+const vConsole = new VConsole()
+Vue.use(vConsole)
 Vue.use(VueLazyload, {
   loading: require('./assets/images/loading.png')
 })

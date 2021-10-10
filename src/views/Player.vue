@@ -3,7 +3,7 @@
     <NormalPlayer :totalTime="totalTime" :currentTime="currentTime"></NormalPlayer>
     <MiniPlayer></MiniPlayer>
     <ListPlayer ref="listPlayer"></ListPlayer>
-    <audio :src="currentSong.url" ref="audio" @timeupdate="timeupdate" @ended="end"></audio>
+    <audio preload="auto" :src="currentSong.url" ref="audio" @timeupdate="timeupdate" @ended="end"></audio>
   </div>
 </template>
 
@@ -70,7 +70,8 @@ export default {
       }
     },
     currentIndex () {
-      this.$refs.audio.oncanplay = () => {
+      this.$refs.audio.ondurationchange = () => {
+        console.log('执行了currentIndex')
         this.totalTime = this.$refs.audio.duration
         if (this.isPlaying) {
           this.setHistorySong(this.currentSong)
@@ -104,7 +105,8 @@ export default {
     this.setHistoryList(historyList)
   },
   mounted () {
-    this.$refs.audio.oncanplay = () => {
+    this.$refs.audio.ondurationchange = () => {
+      console.log('执行了oncanplay')
       this.totalTime = this.$refs.audio.duration
     }
   },

@@ -15,8 +15,8 @@ export default {
       // 禁用滚动条
       scrollbars: false,
       probeType: 3,
-      // click: true,
-      // tap: true,
+      click: true,
+      tap: true,
       // 解决拖拽卡顿问题
       scrollX: false,
       scrollY: true,
