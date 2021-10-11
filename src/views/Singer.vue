@@ -21,6 +21,7 @@
           @touchmove.stop.prevent="touchmove"
           :class="{'active' : currentIndex === index}">{{key}}</li>
     </ul>
+    <div class="fix-title" v-show="fixTitle !== ''">{{fixTitle}}</div>
   </div>
 </template>
 
@@ -63,6 +64,15 @@ export default {
       this._keyDown(index)
     }
   },
+  computed: {
+    fixTitle () {
+      if (this.scrollY >= 0) {
+        return ''
+      } else {
+        return this.keys[this.currentIndex]
+      }
+    }
+  },
   created () {
     getAllArtists()
       .then((result) => {
@@ -76,6 +86,7 @@ export default {
   },
   mounted () {
     this.$refs.scrollView.scrolling(y => {
+      this.scrollY = y
       // console.log(y)
       // 处理第一个区域
       if (y >= 0) {
@@ -102,7 +113,8 @@ export default {
       groupsTop: [],
       currentIndex: 0,
       beginOffsetY: 0,
-      moveOffsetY: 0
+      moveOffsetY: 0,
+      scrollY: 0
     }
   },
   watch: {
@@ -175,6 +187,17 @@ export default {
         text-shadow: 0 0 10px #000;
       }
     }
+  }
+  .fix-title{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    @include font_size($font_medium);
+    color: #ffffff;
+    @include bg_color;
   }
 }
 </style>
