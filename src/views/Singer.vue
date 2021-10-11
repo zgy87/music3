@@ -1,8 +1,8 @@
 <template>
   <div class="singer">
-    <ScrollView>
+    <ScrollView ref="scrollView">
       <ul class="list-wrapper">
-        <li class="list-group" v-for="(value, index) in list" :key="index">
+        <li class="list-group" v-for="(value, index) in list" :key="index" ref="group">
           <h2 class="group-title">{{keys[index]}}</h2>
           <ul>
             <li class="group-item" v-for="obj in list[index]" :key="obj.id">
@@ -13,6 +13,14 @@
         </li>
       </ul>
     </ScrollView>
+    <ul class="list-keys">
+      <li v-for="(key, index) in keys"
+          :key="key"
+          :data-index="index"
+          @touchstart.stop.prevent="touchstart"
+          @touchmove.stop.prevent="touchmove"
+          :class="{'active' : currentIndex === index}">{{key}}</li>
+    </ul>
   </div>
 </template>
 
@@ -27,6 +35,34 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     ScrollView
   },
+  methods: {
+    _keyDown (index) {
+      this.currentIndex = index
+      // console.log(index)
+      const offsetY = this.groupsTop[index]
+      // console.log(offsetY)
+      this.$refs.scrollView.scrollTo(0, -offsetY)
+    },
+    touchstart (e) {
+      // console.log(e.target.dataset.index)
+      const index = parseInt(e.target.dataset.index)
+      this._keyDown(index)
+
+      this.beginOffsetY = e.touches[0].pageY
+    },
+    touchmove (e) {
+      this.moveOffsetY = e.touches[0].pageY
+      const offsetY = (this.moveOffsetY - this.beginOffsetY) / e.target.offsetHeight
+      // console.log(offsetY)
+      let index = parseInt(e.target.dataset.index) + Math.floor(offsetY)
+      if (index < 0) {
+        index = 0
+      } else if (index > this.keys.length - 1) {
+        index = this.keys.length - 1
+      }
+      this._keyDown(index)
+    }
+  },
   created () {
     getAllArtists()
       .then((result) => {
@@ -38,10 +74,47 @@ export default {
         console.log(err)
       })
   },
+  mounted () {
+    this.$refs.scrollView.scrolling(y => {
+      // console.log(y)
+      // 处理第一个区域
+      if (y >= 0) {
+        this.currentIndex = 0
+        return
+      }
+      // 处理中间区域和第一个区域
+      for (let i = 0; i < this.groupsTop.length - 1; i++) {
+        const preTop = this.groupsTop[i]
+        const nextTop = this.groupsTop[i + 1]
+        if (-y >= preTop && -y <= nextTop) {
+          this.currentIndex = i
+          return
+        }
+      }
+      // 处理最后一个区域
+      this.currentIndex = this.groupsTop.length - 1
+    })
+  },
   data () {
     return {
       keys: [],
-      list: []
+      list: [],
+      groupsTop: [],
+      currentIndex: 0,
+      beginOffsetY: 0,
+      moveOffsetY: 0
+    }
+  },
+  watch: {
+    list () {
+      // console.log(this.$refs.group)
+      this.$nextTick(() => {
+        // console.log(this.$refs.group)
+        this.$refs.group.forEach(group => {
+          this.groupsTop.push(group.offsetTop)
+        })
+        // console.log(this.groupsTop)
+      })
     }
   }
 }
@@ -86,6 +159,20 @@ export default {
           @include font_color;
           margin-left: 20px;
         }
+      }
+    }
+    }
+  .list-keys{
+    position: fixed;
+    right: 10px;
+    top: 55%;
+    transform: translateY(-50%);
+    li{
+      @include font_color;
+      @include font_size($font_medium_s);
+      padding: 3px 0;
+      &.active{
+        text-shadow: 0 0 10px #000;
       }
     }
   }
