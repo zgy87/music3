@@ -21,7 +21,7 @@
           @touchmove.stop.prevent="touchmove"
           :class="{'active' : currentIndex === index}">{{key}}</li>
     </ul>
-    <div class="fix-title" v-show="fixTitle !== ''">{{fixTitle}}</div>
+    <div class="fix-title" v-show="fixTitle !== ''" ref="fixTitle">{{fixTitle}}</div>
   </div>
 </template>
 
@@ -99,6 +99,22 @@ export default {
         const nextTop = this.groupsTop[i + 1]
         if (-y >= preTop && -y <= nextTop) {
           this.currentIndex = i
+
+          // 0.距离顶部间隙(下一组标题偏移位-当前滚动偏移位)
+          const diffOffsetY = nextTop + y
+          let fixTitleOffsetY = 0
+          // 1.滚动的结果是0~分组标题高度的值
+          if (diffOffsetY >= 0 && diffOffsetY <= this.fixTitleHeight) {
+            fixTitleOffsetY = diffOffsetY - this.fixTitleHeight
+          } else {
+            fixTitleOffsetY = 0
+          }
+          if (fixTitleOffsetY > this.fixTitleHeight) {
+            return
+          }
+          // //                     -59
+          // this.fixTitleHeight = fixTitleOffsetY
+          this.$refs.fixTitle.style.transform = `translateY(${fixTitleOffsetY}px)`
           return
         }
       }
@@ -126,6 +142,11 @@ export default {
           this.groupsTop.push(group.offsetTop)
         })
         // console.log(this.groupsTop)
+      })
+    },
+    fixTitle () {
+      this.$nextTick(() => {
+        this.fixTitleHeight = this.$refs.fixTitle.offsetHeight
       })
     }
   }
