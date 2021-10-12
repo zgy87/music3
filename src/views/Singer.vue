@@ -5,7 +5,7 @@
         <li class="list-group" v-for="(value, index) in list" :key="index" ref="group">
           <h2 class="group-title">{{keys[index]}}</h2>
           <ul>
-            <li class="group-item" v-for="obj in list[index]" :key="obj.id">
+            <li class="group-item" v-for="obj in list[index]" :key="obj.id" @click.stop="switchSinger(obj.id)">
               <img v-lazy="obj.picUrl" alt="">
               <p>{{obj.name}}</p>
             </li>
@@ -22,6 +22,9 @@
           :class="{'active' : currentIndex === index}">{{key}}</li>
     </ul>
     <div class="fix-title" v-show="fixTitle !== ''" ref="fixTitle">{{fixTitle}}</div>
+    <transition>
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -62,6 +65,9 @@ export default {
         index = this.keys.length - 1
       }
       this._keyDown(index)
+    },
+    switchSinger (id) {
+      this.$router.push(`/singer/detail/${id}/singer`)
     }
   },
   computed: {
@@ -109,12 +115,15 @@ export default {
           } else {
             fixTitleOffsetY = 0
           }
-          if (fixTitleOffsetY > this.fixTitleHeight) {
+          // console.log(fixTitleOffsetY, 'fixTitleOffsetY')
+          if (fixTitleOffsetY === this.fixTitleOffsetY) {
+            // console.log(this.fixTitleOffsetY, 'this.fixTitleOffsetY')
             return
           }
           // //                     -59
-          // this.fixTitleHeight = fixTitleOffsetY
+          this.fixTitleOffsetY = fixTitleOffsetY
           this.$refs.fixTitle.style.transform = `translateY(${fixTitleOffsetY}px)`
+          // console.log('111')
           return
         }
       }
@@ -220,5 +229,23 @@ export default {
     color: #ffffff;
     @include bg_color;
   }
+}
+.v-enter{
+  transform: translateX(100%);
+}
+.v-enter-to{
+  transform: translateX(0%);
+}
+.v-enter-active{
+  transition: all 1s;
+}
+.v-leave{
+  transform: translateX(0%);
+}
+.v-leave-to{
+  transform: translateX(100%);
+}
+.v-leave-active{
+  transition: all 1s;
 }
 </style>

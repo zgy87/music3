@@ -51,7 +51,17 @@ const routes = [
       }
     ]
   },
-  { path: '/singer', component: Singer },
+  {
+    path: '/singer',
+    component: Singer,
+    children: [
+      {
+        path: 'detail/:id/:type',
+        // path: 'detail/:id',
+        component: Detail
+      }
+    ]
+  },
   { path: '/rank', component: Rank },
   { path: '/search', component: Search },
   { path: '/account', component: Account }
