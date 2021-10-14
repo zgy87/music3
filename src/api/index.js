@@ -81,17 +81,17 @@ export const getTopListDetail = () => {
         { name: '云音乐说唱榜', id: 23 },
         { name: '云音乐电音榜', id: 25 },
         { name: '云音乐欧美新歌榜', id: 32 },
-        { name: '抖音排行榜', id: 26 },
-        { name: '云音乐ACG音乐榜', id: 22 },
-        { name: '云音乐古典音乐榜', id: 24 }
+        { name: '抖音排行榜', id: 26 }
+        // { name: '云音乐ACG音乐榜', id: 22 },
+        // { name: '云音乐古典音乐榜', id: 24 }
       ],
       globalList: [
         { name: '美国Billboard榜', id: 6 },
         { name: 'UK排行榜周榜', id: 5 },
         { name: 'Beatport全球电子舞曲榜', id: 21 },
         { name: '日本Oricon榜', id: 10 },
-        { name: 'iTunes榜', id: 8 },
-        { name: '英国Q杂志中文版周榜', id: 29 }
+        { name: 'iTunes榜', id: 8 }
+        // { name: '英国Q杂志中文版周榜', id: 29 }
       ],
       otherList: [
         { name: 'KTV唛榜', id: 7 },
@@ -121,7 +121,22 @@ export const getTopListDetail = () => {
             }
           }
         })
-        // console.log(category)
+        console.log(category, '处理之前')
+        for (const key in category.titles) {
+          console.log(key)
+          for (let i = 0; i < category[key].length; i++) {
+            if (!category[key][i].rank) {
+              category[key].splice(i, 1)
+              // delete category[key][i]
+            }
+          }
+        }
+        console.log(category, '处理之后')
+        // for (const key in category.titles) {
+        //   for (let i = 0; i < category[key].length; i++) {
+        //     console.log(category[key][i].rank.name, category[key][i].rank.coverImgUrl)
+        //   }
+        // }
         resolve(category)
       })
       .catch(function (err) {
@@ -129,3 +144,5 @@ export const getTopListDetail = () => {
       })
   })
 }
+export const getTopList = (data) => Network.get('/top/list', data)
+export const getSearchList = (data) => Network.get('/search?type=1', data)
