@@ -14,6 +14,7 @@ import ListPlayer from '@/components/Player/ListPlayer'
 import { mapGetters, mapActions } from 'vuex'
 import mode from '../store/modeType'
 import { getRandomIntInclusive, setLocalStorage, getLocalStorage } from '../tools/tools'
+
 export default {
   name: 'Player',
   components: {

@@ -22,9 +22,11 @@ import Banner from '../components/Recommend/Banner'
 import Personalized from '../components/Recommend/Personalized'
 import SongList from '../components/Recommend/SongList'
 import ScrollView from '../components/ScrollView'
+import MetaInfo from '../../vue-meta-info'
 // import router from '@vue/cli-plugin-router'
 export default {
   name: 'Recommend',
+  metaInfo: MetaInfo.recommend,
   components: {
     // eslint-disable-next-line
     Banner,

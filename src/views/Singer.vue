@@ -1,27 +1,29 @@
 <template>
   <div class="singer">
-    <ScrollView ref="scrollView">
-      <ul class="list-wrapper">
-        <li class="list-group" v-for="(value, index) in list" :key="index" ref="group">
-          <h2 class="group-title">{{keys[index]}}</h2>
-          <ul>
-            <li class="group-item" v-for="obj in list[index]" :key="obj.id" @click.stop="switchSinger(obj.id)">
-              <img v-lazy="obj.picUrl" alt="">
-              <p>{{obj.name}}</p>
-            </li>
-          </ul>
-        </li>
+    <div class="singer-wrapper">
+      <ScrollView ref="scrollView">
+        <ul class="list-wrapper">
+          <li class="list-group" v-for="(value, index) in list" :key="index" ref="group">
+            <h2 class="group-title">{{keys[index]}}</h2>
+            <ul>
+              <li class="group-item" v-for="(obj, index1) in list[index]" :key="index1" @click.stop="switchSinger(obj.id)">
+                <img v-lazy="obj.picUrl" alt="">
+                <p>{{obj.name}}</p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </ScrollView>
+      <ul class="list-keys">
+        <li v-for="(key, index) in keys"
+            :key="key"
+            :data-index="index"
+            @touchstart.stop.prevent="touchstart"
+            @touchmove.stop.prevent="touchmove"
+            :class="{'active' : currentIndex === index}">{{key}}</li>
       </ul>
-    </ScrollView>
-    <ul class="list-keys">
-      <li v-for="(key, index) in keys"
-          :key="key"
-          :data-index="index"
-          @touchstart.stop.prevent="touchstart"
-          @touchmove.stop.prevent="touchmove"
-          :class="{'active' : currentIndex === index}">{{key}}</li>
-    </ul>
-    <div class="fix-title" v-show="fixTitle !== ''" ref="fixTitle">{{fixTitle}}</div>
+      <div class="fix-title" v-show="fixTitle !== ''" ref="fixTitle">{{fixTitle}}</div>
+    </div>
     <transition>
       <router-view></router-view>
     </transition>
@@ -33,8 +35,11 @@
 // import { getLetterArtists } from '../api/index'
 import { getAllArtists } from '../api/index'
 import ScrollView from '../components/ScrollView'
+import MetaInfo from '../../vue-meta-info'
+
 export default {
   name: 'Singer',
+  metaInfo: MetaInfo.singer,
   components: {
     // eslint-disable-next-line vue/no-unused-components
     ScrollView
@@ -82,7 +87,7 @@ export default {
   created () {
     getAllArtists()
       .then((result) => {
-        console.log(result)
+        // console.log(result)
         this.keys = result.keys
         this.list = result.list
       })
@@ -166,68 +171,72 @@ export default {
 @import "../assets/css/variable";
 @import "../assets/css/mixin";
 .singer{
-  position: fixed;
-  top: 184px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  //background: #ffcc33;
-  @include bg_sub_color;
-  overflow: hidden;
-  .list-wrapper{
-    //width: 100px;
-    //height: 100px;
-    .list-group{
-      .group-title{
-        @include bg_color;
-        @include font_size($font_medium);
-        color: #fff;
-        padding: 10px 20px;
-        box-sizing: border-box;
-      }
-      .group-item{
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        border-bottom: 1px solid #ccc;
-        img{
-          width: 100px;
-          height: 100px;
-          border-radius: 50%;
-          overflow: hidden;
-        }
-        p{
-          @include font_size($font_medium);
-          @include font_color;
-          margin-left: 20px;
-        }
-      }
-    }
-    }
-  .list-keys{
+  width: 100%;
+  height: 100%;
+  .singer-wrapper{
     position: fixed;
-    right: 10px;
-    top: 55%;
-    transform: translateY(-50%);
-    li{
-      @include font_color;
-      @include font_size($font_medium_s);
-      padding: 3px 0;
-      &.active{
-        text-shadow: 0 0 10px #000;
-      }
-    }
-  }
-  .fix-title{
-    position: absolute;
+    top: 184px;
+    bottom: 0;
     left: 0;
     right: 0;
-    top: 0;
-    padding: 10px 20px;
-    box-sizing: border-box;
-    @include font_size($font_medium);
-    color: #ffffff;
-    @include bg_color;
+    //background: #ffcc33;
+    @include bg_sub_color;
+    overflow: hidden;
+    .list-wrapper{
+      //width: 100px;
+      //height: 100px;
+      .list-group{
+        .group-title{
+          @include bg_color;
+          @include font_size($font_medium);
+          color: #fff;
+          padding: 10px 20px;
+          box-sizing: border-box;
+        }
+        .group-item{
+          display: flex;
+          align-items: center;
+          padding: 10px 20px;
+          border-bottom: 1px solid #ccc;
+          img{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+          }
+          p{
+            @include font_size($font_medium);
+            @include font_color;
+            margin-left: 20px;
+          }
+        }
+      }
+    }
+    .list-keys{
+      position: fixed;
+      right: 10px;
+      top: 55%;
+      transform: translateY(-50%);
+      li{
+        @include font_color;
+        @include font_size($font_medium_s);
+        padding: 3px 0;
+        &.active{
+          text-shadow: 0 0 10px #000;
+        }
+      }
+    }
+    .fix-title{
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      @include font_size($font_medium);
+      color: #ffffff;
+      @include bg_color;
+    }
   }
 }
 .v-enter{
